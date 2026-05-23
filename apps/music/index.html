@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}:root{--a:#f05a28}
+html,body{width:100%;height:100%;background:linear-gradient(160deg,#1a0535,#350a52);font-family:'Nunito',sans-serif;color:white;overflow:hidden;user-select:none}
+.bar{display:flex;align-items:center;gap:14px;padding:52px 20px 10px}
+.back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bar h2{font-size:26px;font-weight:700}
+.art{width:190px;height:190px;margin:10px auto;border-radius:24px;background:linear-gradient(135deg,#2d0b4e,#6a1b9a);display:flex;align-items:center;justify-content:center;font-size:80px;box-shadow:0 20px 60px rgba(0,0,0,0.6);transition:border-radius .3s}
+.art.spin{animation:spin 12s linear infinite;border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.info{text-align:center;padding:12px}
+.info-t{font-size:22px;font-weight:700}.info-a{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px}
+.prog-bar{margin:12px 24px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;cursor:pointer}
+.prog-fill{height:100%;background:var(--a);border-radius:2px;width:35%;transition:width .5s linear}
+.times{display:flex;justify-content:space-between;padding:0 24px;font-size:12px;color:rgba(255,255,255,0.4)}
+.ctrls{display:flex;align-items:center;justify-content:center;gap:24px;margin:12px 0}
+.cbtn{background:none;border:none;cursor:pointer;color:white;font-size:24px;padding:8px;transition:transform .15s}
+.cbtn:active{transform:scale(0.85)}
+.pp{width:64px;height:64px;background:white;color:#1a0535;border-radius:50%;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,255,255,0.2)}
+.plist{overflow-y:auto;max-height:200px;padding:0 16px}
+.pitem{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer}
+.pthumb{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:20px}
+.pinfo{flex:1}.pt{font-size:14px;font-weight:500}.pa{font-size:12px;color:rgba(255,255,255,0.4)}
+.pdur{font-size:12px;color:rgba(255,255,255,0.3)}
+</style></head><body>
+<div class="bar"><button class="back" onclick="window.parent.postMessage({type:'close-app'},'*')">‹</button><h2>Музыка</h2></div>
+<div class="art" id="art">🎵</div>
+<div class="info"><div class="info-t" id="mt">Never Settle</div><div class="info-a" id="ma">OnePlus Original</div></div>
+<div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+<div class="times"><span id="tc">1:24</span><span id="tt">3:45</span></div>
+<div class="ctrls">
+  <button class="cbtn" onclick="prev()">⏮</button>
+  <button class="cbtn pp" id="pp" onclick="tog()">▶</button>
+  <button class="cbtn" onclick="next()">⏭</button>
+</div>
+<div class="plist" id="plist"></div>
+<script>
+const tracks=[{t:'Never Settle',a:'OnePlus Original',dur:'3:45',e:'🔥'},{t:'Cosmic Night',a:'Ambient Mix',dur:'4:12',e:'🌌'},{t:'Aurora Dreams',a:'Synthwave',dur:'3:28',e:'🌊'},{t:'Crimson Sky',a:'Electronic',dur:'5:01',e:'🌅'}];
+let ci=0,playing=false,prog=0,pint=null;
+function parseDur(s){const p=s.split(':');return+p[0]*60+ +p[1]}
+function render(){
+  const t=tracks[ci];
+  document.getElementById('mt').textContent=t.t;
+  document.getElementById('ma').textContent=t.a;
+  document.getElementById('tt').textContent=t.dur;
+  document.getElementById('art').textContent=t.e;
+  document.getElementById('plist').innerHTML=tracks.map((tr,i)=>`<div class="pitem" onclick="sel(${i})"><div class="pthumb" style="${i===ci?'background:rgba(240,90,40,0.2);border:1px solid rgba(240,90,40,0.3)':''}">${tr.e}</div><div class="pinfo"><div class="pt" style="${i===ci?'color:var(--a)':''}">${tr.t}</div><div class="pa">${tr.a}</div></div><div class="pdur">${tr.dur}</div></div>`).join('');
+}
+function tog(){playing=!playing;document.getElementById('pp').textContent=playing?'⏸':'▶';document.getElementById('art').classList.toggle('spin',playing);if(playing){pint=setInterval(()=>{prog=Math.min(prog+0.3,100);document.getElementById('pf').style.width=prog+'%';const tot=parseDur(tracks[ci].dur),cur=Math.floor(tot*prog/100);const m=Math.floor(cur/60),s=cur%60;document.getElementById('tc').textContent=m+':'+(s<10?'0'+s:s);if(prog>=100)next()},500)}else{clearInterval(pint)}}
+function sel(i){ci=i;prog=0;document.getElementById('pf').style.width='0%';document.getElementById('tc').textContent='0:00';render();if(!playing)tog()}
+function prev(){ci=(ci-1+tracks.length)%tracks.length;prog=0;render();if(playing){clearInterval(pint);tog()}}
+function next(){ci=(ci+1)%tracks.length;prog=0;render();if(playing){clearInterval(pint);tog()}}
+render();
+</script>
+</body></html>
