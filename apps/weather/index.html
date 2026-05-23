@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:linear-gradient(160deg,#0f2027,#203a43,#2c5364);font-family:'Nunito',sans-serif;color:white;overflow-y:auto;user-select:none}
+::-webkit-scrollbar{width:0}
+.bar{display:flex;align-items:center;gap:14px;padding:52px 20px 10px}
+.back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bar h2{font-size:26px;font-weight:700}
+.main{text-align:center;padding:10px 24px 20px}
+.city{font-size:22px;font-weight:600;opacity:.85}
+.w-icon{font-size:90px;margin:8px 0;filter:drop-shadow(0 0 20px rgba(255,255,255,0.3))}
+.temp{font-size:96px;font-weight:100;letter-spacing:-6px;line-height:1}
+.desc{font-size:18px;opacity:.65;margin:6px 0}
+.range{font-size:14px;opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px 20px}
+.card{background:rgba(255,255,255,0.08);border-radius:16px;padding:14px;backdrop-filter:blur(10px)}
+.clbl{font-size:11px;opacity:.45;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.cval{font-size:22px;font-weight:600}
+.forecast{padding:0 16px 30px}
+.fc-title{font-size:12px;opacity:.4;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.fc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+.fc-day{font-size:14px;opacity:.7;width:50px}
+.fc-icon{font-size:22px}
+.fc-bar{flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.fc-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#74b9ff,#fd79a8)}
+.fc-temps{font-size:13px;text-align:right;opacity:.8}
+</style></head><body>
+<div class="bar"><button class="back" onclick="window.parent.postMessage({type:'close-app'},'*')">‹</button><h2>Погода</h2></div>
+<div class="main">
+  <div class="city">📍 Москва, Россия</div>
+  <div class="w-icon" id="wicon">🌤</div>
+  <div class="temp" id="wtemp">+19°</div>
+  <div class="desc" id="wdesc">Переменная облачность</div>
+  <div class="range" id="wrange">↑ 22° · ↓ 14°</div>
+</div>
+<div class="grid">
+  <div class="card"><div class="clbl">Ощущается</div><div class="cval">+17°</div></div>
+  <div class="card"><div class="clbl">Влажность</div><div class="cval">58%</div></div>
+  <div class="card"><div class="clbl">Ветер</div><div class="cval">12 км/ч</div></div>
+  <div class="card"><div class="clbl">Давление</div><div class="cval">762 мм</div></div>
+  <div class="card"><div class="clbl">УФ-индекс</div><div class="cval">3 · Низкий</div></div>
+  <div class="card"><div class="clbl">Видимость</div><div class="cval">10 км</div></div>
+</div>
+<div class="forecast">
+  <div class="fc-title">Прогноз на неделю</div>
+  <div class="fc-row"><div class="fc-day">Сегодня</div><div class="fc-icon">🌤</div><div class="fc-bar"><div class="fc-fill" style="width:75%"></div></div><div class="fc-temps">+14° / +22°</div></div>
+  <div class="fc-row"><div class="fc-day">Завтра</div><div class="fc-icon">⛅</div><div class="fc-bar"><div class="fc-fill" style="width:60%"></div></div><div class="fc-temps">+12° / +19°</div></div>
+  <div class="fc-row"><div class="fc-day">Ср</div><div class="fc-icon">🌧</div><div class="fc-bar"><div class="fc-fill" style="width:40%"></div></div><div class="fc-temps">+10° / +15°</div></div>
+  <div class="fc-row"><div class="fc-day">Чт</div><div class="fc-icon">⛈</div><div class="fc-bar"><div class="fc-fill" style="width:30%"></div></div><div class="fc-temps">+8° / +13°</div></div>
+  <div class="fc-row"><div class="fc-day">Пт</div><div class="fc-icon">🌤</div><div class="fc-bar"><div class="fc-fill" style="width:80%"></div></div><div class="fc-temps">+13° / +21°</div></div>
+  <div class="fc-row"><div class="fc-day">Сб</div><div class="fc-icon">☀️</div><div class="fc-bar"><div class="fc-fill" style="width:95%"></div></div><div class="fc-temps">+16° / +25°</div></div>
+  <div class="fc-row"><div class="fc-day">Вс</div><div class="fc-icon">☀️</div><div class="fc-bar"><div class="fc-fill" style="width:90%"></div></div><div class="fc-temps">+17° / +26°</div></div>
+</div>
+<script>
+// Имитация смены погоды
+const weathers=[
+  {i:'☀️',t:'+24°',d:'Ясно и солнечно',r:'↑ 27° · ↓ 18°'},
+  {i:'🌤',t:'+19°',d:'Переменная облачность',r:'↑ 22° · ↓ 14°'},
+  {i:'⛅',t:'+16°',d:'Облачно',r:'↑ 18° · ↓ 12°'},
+  {i:'🌧',t:'+12°',d:'Дождь',r:'↑ 14° · ↓ 9°'},
+  {i:'⛈',t:'+10°',d:'Гроза',r:'↑ 13° · ↓ 8°'},
+];
+const w=weathers[Math.floor(Math.random()*weathers.length)];
+document.getElementById('wicon').textContent=w.i;
+document.getElementById('wtemp').textContent=w.t;
+document.getElementById('wdesc').textContent=w.d;
+document.getElementById('wrange').textContent=w.r;
+</script>
+</body></html>
