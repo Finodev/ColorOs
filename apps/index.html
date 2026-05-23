@@ -1,97 +1,30 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
+<html lang="ru"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--accent:#f05a28}
-html,body{width:100%;height:100%;background:#111118;font-family:'Nunito',sans-serif;overflow:hidden;user-select:none;color:white}
-.bar{display:flex;align-items:center;gap:14px;padding:52px 20px 0}
+html,body{width:100%;height:100%;background:#111;font-family:'Nunito',sans-serif;color:white;overflow:hidden;user-select:none}
+.bar{display:flex;align-items:center;gap:14px;padding:52px 20px 14px;background:#111;position:sticky;top:0;z-index:10}
 .back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.bar-title{font-size:26px;font-weight:700}
-.display{padding:16px 28px 6px;text-align:right;min-height:155px;display:flex;flex-direction:column;justify-content:flex-end}
-.expr{font-size:17px;color:rgba(255,255,255,0.32);min-height:24px}
-.result{font-size:72px;font-weight:200;letter-spacing:-3px;line-height:1.05;word-break:break-all;transition:font-size 0.15s}
-.result.sm{font-size:48px}.result.xs{font-size:34px}
-.ns{height:28px;display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;transform:translateY(8px);transition:opacity 0.5s,transform 0.5s cubic-bezier(0.34,1.4,0.64,1)}
-.ns.show{opacity:1;transform:none}
-.ns-line{height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--accent))}
-.ns-line.r{background:linear-gradient(90deg,var(--accent),transparent)}
-.ns-text{font-size:10px;font-weight:800;letter-spacing:3.5px;color:var(--accent);text-transform:uppercase}
-.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:6px 18px 28px}
-.btn{height:68px;border-radius:22px;border:none;font-size:22px;font-weight:500;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:transform 0.12s cubic-bezier(0.34,1.4,0.64,1),opacity 0.12s}
-.btn:active{transform:scale(0.88);opacity:0.8}
-.num{background:#1e1e2a}.op{background:rgba(240,90,40,0.15);color:var(--accent);font-size:24px}
-.fn{background:#181824;color:rgba(255,255,255,0.65);font-size:17px}
-.eq{background:var(--accent);font-size:26px}
-.zero{grid-column:span 2;border-radius:34px;justify-content:flex-start;padding-left:28px}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.22);width:60px;height:60px;margin:-30px;animation:rpl 0.5s ease-out forwards;pointer-events:none}
-@keyframes rpl{to{transform:scale(4);opacity:0}}
+.bar h2{font-size:26px;font-weight:700;flex:1}.count{font-size:13px;color:rgba(255,255,255,0.4)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;overflow-y:auto;height:calc(100% - 110px)}
+.cell{aspect-ratio:1;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:52px;animation:gi .35s ease both;transition:transform .2s}
+.cell:active{transform:scale(0.95)}
+@keyframes gi{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:none}}
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:100;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.lb.open{display:flex;animation:lbi .3s cubic-bezier(0.34,1.4,0.64,1)}
+@keyframes lbi{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:none}}
+.lb-e{font-size:130px}.lb-n{font-size:16px;color:rgba(255,255,255,0.55)}
+.lb-close{padding:12px 28px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:100px;color:white;font-size:15px;font-weight:600;cursor:pointer;font-family:'Nunito',sans-serif}
 </style>
-</head>
-<body>
-<div class="bar"><button class="back" onclick="closeMe()">‹</button><span class="bar-title">Калькулятор</span></div>
-<div class="display">
-  <div class="expr" id="expr"></div>
-  <div class="result" id="res">0</div>
-  <div class="ns" id="ns"><div class="ns-line"></div><div class="ns-text">Never Settle</div><div class="ns-line r"></div></div>
-</div>
-<div class="keys">
-  <button class="btn fn" onclick="fn('AC')">AC</button>
-  <button class="btn fn" onclick="fn('+/-')">+/-</button>
-  <button class="btn fn" onclick="fn('%')">%</button>
-  <button class="btn op" onclick="op('÷')">÷</button>
-  <button class="btn num" onclick="num('7')">7</button>
-  <button class="btn num" onclick="num('8')">8</button>
-  <button class="btn num" onclick="num('9')">9</button>
-  <button class="btn op" onclick="op('×')">×</button>
-  <button class="btn num" onclick="num('4')">4</button>
-  <button class="btn num" onclick="num('5')">5</button>
-  <button class="btn num" onclick="num('6')">6</button>
-  <button class="btn op" onclick="op('-')">−</button>
-  <button class="btn num" onclick="num('1')">1</button>
-  <button class="btn num" onclick="num('2')">2</button>
-  <button class="btn num" onclick="num('3')">3</button>
-  <button class="btn op" onclick="op('+')">+</button>
-  <button class="btn num zero" onclick="num('0')">0</button>
-  <button class="btn num" onclick="num('.')">.</button>
-  <button class="btn eq" onclick="eq()">=</button>
-</div>
+</head><body>
+<div class="bar"><button class="back" onclick="window.parent.postMessage({type:'close-app'},'*')">‹</button><h2>Галерея</h2><span class="count">12 фото</span></div>
+<div class="grid" id="grid"></div>
+<div class="lb" id="lb"><div class="lb-e" id="lb-e"></div><div class="lb-n" id="lb-n"></div><button class="lb-close" onclick="document.getElementById('lb').classList.remove('open')">Закрыть</button></div>
 <script>
-let e='',just=false,nsT=null;
-const RE=document.getElementById('res'),EX=document.getElementById('expr'),NS=document.getElementById('ns');
-function setR(v){RE.textContent=String(v);RE.className='result';const l=String(v).length;if(l>10)RE.classList.add('sm');if(l>15)RE.classList.add('xs')}
-function num(n){if(just&&n!=='.')e='',just=false;if(n==='.'&&e.split(/[+\-×÷]/).pop().includes('.'))return;if(e.length>20)return;e+=n;setR(e||'0');preview();hideNS()}
-function op(o){if(!e)return;if(/[+\-×÷]$/.test(e))e=e.slice(0,-1);e+=o;setR(e);preview();hideNS()}
-function preview(){try{const r=Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/'))();if(isFinite(r)&&!isNaN(r)&&String(r)!==e)EX.textContent='= '+parseFloat(r.toFixed(8));else EX.textContent=''}catch{EX.textContent=''}}
-function eq(){
-  if(!e)return;
-  if(/\+1$/.test(e))triggerNS();
-  try{
-    const r=Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/'))();
-    if(!isFinite(r)||isNaN(r)){setR('Ошибка');e='';return}
-    const rv=parseFloat(r.toFixed(10));
-    EX.textContent=e;e=String(rv);just=true;setR(rv);
-  }catch{setR('Ошибка');e=''}
-}
-function fn(f){
-  if(f==='AC'){e='';just=false;setR('0');EX.textContent='';hideNS()}
-  else if(f==='+/-'){if(!e)return;e=e.startsWith('-')?e.slice(1):'-'+e;setR(e)}
-  else if(f==='%'){try{const v=parseFloat(Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/'))());e=String(v/100);setR(e)}catch{}}
-}
-function triggerNS(){if(nsT)clearTimeout(nsT);NS.classList.add('show');try{window.parent.postMessage({type:'show-notif',icon:'🔥',app:'OnePlus',body:'Never Settle — философия OnePlus!'},'*')}catch(e){}nsT=setTimeout(hideNS,3500)}
-function hideNS(){NS.classList.remove('show')}
-function closeMe(){window.parent.postMessage({type:'close-app'},'*')}
-document.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',ev=>{const r=document.createElement('span');r.className='ripple';const rc=b.getBoundingClientRect();r.style.left=(ev.clientX-rc.left)+'px';r.style.top=(ev.clientY-rc.top)+'px';b.appendChild(r);setTimeout(()=>r.remove(),500)}));
-document.addEventListener('keydown',ev=>{
-  if(ev.key>='0'&&ev.key<='9')num(ev.key);
-  else if(ev.key==='+')op('+');else if(ev.key==='-')op('-');else if(ev.key==='*')op('×');
-  else if(ev.key==='/'){ ev.preventDefault();op('÷')}
-  else if(ev.key==='='||ev.key==='Enter')eq();
-  else if(ev.key==='Escape')fn('AC');
-  else if(ev.key==='Backspace'&&e){e=e.slice(0,-1);setR(e||'0')}
-  else if(ev.key==='.')num('.');
-});
+const items=[{e:'🌌',n:'Космос',bg:'linear-gradient(135deg,#667eea,#764ba2)'},{e:'🌅',n:'Закат',bg:'linear-gradient(135deg,#f093fb,#f5576c)'},{e:'🌊',n:'Океан',bg:'linear-gradient(135deg,#4facfe,#00f2fe)'},{e:'🏔',n:'Горы',bg:'linear-gradient(135deg,#43e97b,#38f9d7)'},{e:'🌸',n:'Цветы',bg:'linear-gradient(135deg,#fa709a,#fee140)'},{e:'🦋',n:'Бабочка',bg:'linear-gradient(135deg,#a18cd1,#fbc2eb)'},{e:'🔥',n:'Огонь',bg:'linear-gradient(135deg,#fd7043,#ff8a65)'},{e:'🌙',n:'Луна',bg:'linear-gradient(135deg,#a1c4fd,#c2e9fb)'},{e:'⚡',n:'Молния',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)'},{e:'🎆',n:'Фейерверк',bg:'linear-gradient(135deg,#80deea,#26c6da)'},{e:'🌺',n:'Тропики',bg:'linear-gradient(135deg,#ce93d8,#ab47bc)'},{e:'🎇',n:'Искры',bg:'linear-gradient(135deg,#f48fb1,#e91e63)'}];
+const g=document.getElementById('grid');
+items.forEach((it,i)=>{const d=document.createElement('div');d.className='cell';d.style.cssText='background:'+it.bg+';animation-delay:'+i*0.03+'s';d.textContent=it.e;d.onclick=()=>{document.getElementById('lb-e').textContent=it.e;document.getElementById('lb-n').textContent=it.n;document.getElementById('lb').classList.add('open')};g.appendChild(d)});
 </script>
 </body></html>
