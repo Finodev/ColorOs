@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}:root{--a:#f05a28}
+html,body{width:100%;height:100%;background:#111;font-family:'Nunito',sans-serif;color:white;overflow:hidden;user-select:none}
+.bar{display:flex;align-items:center;gap:14px;padding:52px 20px 14px;background:#111;position:sticky;top:0;z-index:10}
+.back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bar h2{font-size:26px;font-weight:700;flex:1}
+.list{overflow-y:auto;height:calc(100% - 110px);padding:0 16px 80px;display:flex;flex-direction:column;gap:10px}
+.ncard{background:rgba(255,255,255,0.06);border-radius:16px;padding:16px;cursor:pointer;transition:background .2s;border-left:3px solid transparent}
+.ncard:hover{background:rgba(255,255,255,0.09)}
+.nc-t{font-size:15px;font-weight:600}.nc-b{font-size:13px;color:rgba(255,255,255,0.45);margin-top:4px}.nc-d{font-size:11px;color:rgba(255,255,255,0.25);margin-top:6px}
+.fab{position:absolute;bottom:26px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--a);border:none;cursor:pointer;font-size:28px;color:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(240,90,40,0.5);transition:transform .2s;z-index:10}
+.fab:hover{transform:scale(1.1)}
+.editor{display:none;flex-direction:column;position:absolute;inset:0;background:#111;z-index:50;border-radius:inherit;padding:16px}
+.editor.open{display:flex}
+.ein{background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);color:white;font-size:22px;font-weight:700;font-family:'Nunito',sans-serif;outline:none;padding-bottom:8px;margin-bottom:12px}
+.ein::placeholder{color:rgba(255,255,255,0.25)}
+.eta{flex:1;background:transparent;border:none;outline:none;color:white;font-size:16px;font-family:'Nunito',sans-serif;line-height:1.7;resize:none}
+.eta::placeholder{color:rgba(255,255,255,0.25)}
+</style></head><body>
+<div class="bar"><button class="back" onclick="window.parent.postMessage({type:'close-app'},'*')">‹</button><h2>Заметки</h2></div>
+<div class="list" id="list"></div>
+<button class="fab" onclick="openEditor(-1)">+</button>
+<div class="editor" id="editor">
+  <div class="bar" style="padding-top:52px">
+    <button class="back" onclick="closeEditor()">‹</button>
+    <h2 style="font-size:20px">Заметка</h2>
+    <button class="back" style="background:var(--a)" onclick="save()">✓</button>
+  </div>
+  <input class="ein" id="ei" placeholder="Заголовок">
+  <textarea class="eta" id="eb" placeholder="Начните писать..."></textarea>
+</div>
+<script>
+const MONTHS=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const COLORS=['#f05a28','#6c5ce7','#0984e3','#00b894','#fdcb6e'];
+let notes=[{t:'Never Settle',b:'Всегда стремиться к большему. OnePlus — философия жизни.',d:'8 мая'},{t:'ColorOS 15',b:'Новые функции: плавные анимации, умные темы, Dynamic...',d:'7 мая'}];
+let ei=-1;
+function render(){const l=document.getElementById('list');l.innerHTML=notes.length?notes.map((n,i)=>`<div class="ncard" style="border-left-color:${COLORS[i%5]}" onclick="openEditor(${i})"><div class="nc-t">${n.t}</div><div class="nc-b">${n.b.slice(0,60)}${n.b.length>60?'...':''}</div><div class="nc-d">${n.d}</div></div>`).join(''):`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:16px;color:rgba(255,255,255,0.3)"><div style="font-size:64px;opacity:.3">📝</div><p>Нет заметок</p></div>`}
+function openEditor(i){ei=i;const ed=document.getElementById('editor');const t=i>=0?notes[i].t:'',b=i>=0?notes[i].b:'';document.getElementById('ei').value=t;document.getElementById('eb').value=b;ed.classList.add('open');setTimeout(()=>document.getElementById('eb').focus(),100)}
+function closeEditor(){document.getElementById('editor').classList.remove('open')}
+function save(){const t=document.getElementById('ei').value.trim()||'Без названия',b=document.getElementById('eb').value.trim();if(!b){closeEditor();return}const n=new Date();const d=n.getDate()+' '+MONTHS[n.getMonth()];if(ei>=0)notes[ei]={t,b,d};else notes.unshift({t,b,d});closeEditor();render()}
+render();
+</script>
+</body></html>
